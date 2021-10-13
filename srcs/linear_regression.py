@@ -1,22 +1,22 @@
 from __future__ import division
 
-import os
-import sys
 import numpy as np
-import matplotlib.pyplot as plt
 import printer
 
 
+# Model function
 def model(X, theta):
     return X.dot(theta)
 
 
+# Cost function
 def cost_function(X, y, theta):
     m = len(y)
 
     return 1 / float(2 * m) * float(np.sum((model(X, theta) - y) ** 2))
 
 
+# Gradient descent
 def grad(X, y, theta):
     m = len(y)
     return 1 / m * X.T.dot(model(X, theta) - y)
@@ -33,12 +33,14 @@ def gradient_descent(X, y, theta, learning_rate, n_iterations):
     return theta, cost_history
 
 
+# Normalize data set to a 0 to 1 interval
 def normalize(x):
     return (x - min(x)) / (max(x) - min(x))
 
 
 # Using Numpy, read each information in .csv and create two arrays
 def parse_data():
+    data = None
     try:
         data = np.genfromtxt('../data.csv', delimiter=',')[1:]
     except:
@@ -56,6 +58,7 @@ def parse_data():
     return x, y
 
 
+# Return coefficient of determination
 def get_determination_coef(y, predictions):
     u = ((y - predictions) ** 2).sum()
     v = ((y - y.mean()) ** 2).sum()
@@ -65,39 +68,16 @@ def get_determination_coef(y, predictions):
 # Main function
 def linear_regression():
     # Read data
-    try:
-        data = np.genfromtxt('../data.csv', delimiter=',')[1:]
-    except:
-        print("\033[31mData file is unreachable.\033[31m\n")
-        exit(1)
-
     x, y = parse_data()
 
     X = np.hstack((x, np.ones(x.shape)))
 
     theta = np.random.randn(2, 1)
-    theta_random = np.random.randn(2, 1)
 
     theta_final, cost_history = gradient_descent(X, y, theta, 0.1, 1000)
     predictions = model(X, theta_final)
 
-    plt.subplot(2, 2, 1)
-    plt.title("Raw data")
-    plt.scatter(x, y)
-    plt.subplot(2, 2, 2)
-    plt.title("Before Machine Learning")
-    plt.scatter(x, y)
-    plt.plot(x, model(X, theta_random), c='r')
-    plt.subplot(2, 2, 3)
-    plt.title("After Machine Learning")
-    plt.scatter(x, y)
-    plt.plot(x, predictions, c='r')
-    plt.subplot(2, 2, 4)
-    plt.title("Cost function")
-    plt.plot(range(1000), cost_history)
-    plt.tick_params()
-    # plt.show()
-
+    printer.print_plots(x, y, X, cost_history, predictions)
     coef = get_determination_coef(y, predictions)
     print("Coefficient of determination : " + str(coef))
 
@@ -108,7 +88,6 @@ def linear_regression():
     except:
         print("\033[31mError during writing theta value.\n\033[0;0m")
     return theta_final
-
 
 
 if __name__ == "__main__":
