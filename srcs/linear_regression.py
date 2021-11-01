@@ -1,5 +1,4 @@
 from __future__ import division
-
 import numpy as np
 import printer
 
@@ -74,7 +73,7 @@ def linear_regression():
 
     theta = np.random.randn(2, 1)
 
-    theta_final, cost_history = gradient_descent(X, y, theta, 0.1, 1000)
+    theta_final, cost_history = gradient_descent(X, y, theta, 0.1, 100)
     predictions = model(X, theta_final)
 
     printer.print_plots(x, y, X, cost_history, predictions)

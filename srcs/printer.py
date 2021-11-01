@@ -20,6 +20,6 @@ def print_plots(x, y, X, cost_history, predictions):
     plt.plot(x, predictions, c='r')
     plt.subplot(2, 2, 4)
     plt.title("Cost function")
-    plt.plot(range(1000), cost_history)
+    plt.plot(range(len(cost_history)), cost_history)
     plt.tick_params()
     plt.show()
