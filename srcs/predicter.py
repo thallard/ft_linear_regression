@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+from linear_regression import error
 
 
 # Get thetas from the save.txt
@@ -11,7 +12,7 @@ def get_theta():
             thetas_map = map(float, buf.split(','))
             thetas = list(thetas_map)
     except:
-        print("\033[31mError during writing theta value.\n\033[0;0m")
+        error("\033[31mError during writing theta value.\n\033[0;0m")
     return thetas
 
 
@@ -23,21 +24,23 @@ def normalize(x, init):
 # Main function, determine the correct price
 def prediction():
     if len(sys.argv) != 2:
-        print("\033[31mIncorrect number of parameters.\033[0m")
-        exit(1)
+        error("\033[31mIncorrect number of parameters.\033[0m")
     km = 0
     try:
         km = int(sys.argv[1])
+        if km <= 0:
+            raise Exception()
     except:
-        print("\033[31mIncorrect value given.\033[0m")
-        exit(1)
+        error("\033[31mIncorrect value given.\033[0m")
     try:
         data = np.genfromtxt('../data.csv', delimiter=',')[1:]
     except:
-        print("\033[31mData file is unreachable.\033[31m\n")
-        return (1)
+        error("\033[31mData file is unreachable.\033[31m\n")
     thetas = get_theta()
-    print("Estimated price :", int(thetas[1] + thetas[0] * normalize(km, data[:, 0])))
+    price = int(thetas[1] + thetas[0] * normalize(km, data[:, 0]))
+    if price < 0:
+        print("Price is ")
+    print("Estimated price :", price)
 
 
 if __name__ == "__main__":

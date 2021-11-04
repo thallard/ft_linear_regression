@@ -3,6 +3,12 @@ import numpy as np
 import printer
 
 
+# Error function which print message and exit
+def error(msg):
+    print(msg)
+    exit(1)
+
+
 # Model function
 def model(X, theta):
     return X.dot(theta)
@@ -12,7 +18,7 @@ def model(X, theta):
 def cost_function(X, y, theta):
     m = len(y)
 
-    return 1 / float(2 * m) * float(np.sum((model(X, theta) - y) ** 2))
+    return 1 / m * float(np.sum((model(X, theta) - y) ** 2))
 
 
 # Gradient descent
@@ -39,12 +45,10 @@ def normalize(x):
 
 # Using Numpy, read each information in .csv and create two arrays
 def parse_data():
-    data = None
     try:
         data = np.genfromtxt('../data.csv', delimiter=',')[1:]
     except:
-        print("\033[31mImpossible to read data file.\033[0m")
-        exit(1)
+        error("\033[31mImpossible to read data file.\033[0m")
 
     x = data[:, 0]
     y = data[:, 1]
@@ -52,9 +56,11 @@ def parse_data():
     y = y.reshape(y.shape[0], 1)
     x = x.reshape(x.shape[0], 1)
 
+    unormalized_x = x
+
     x = normalize(x)
 
-    return x, y
+    return x, y, unormalized_x
 
 
 # Return coefficient of determination
@@ -67,25 +73,25 @@ def get_determination_coef(y, predictions):
 # Main function
 def linear_regression():
     # Read data
-    x, y = parse_data()
+    x, y, unormalized_x = parse_data()
 
     X = np.hstack((x, np.ones(x.shape)))
 
     theta = np.random.randn(2, 1)
 
-    theta_final, cost_history = gradient_descent(X, y, theta, 0.1, 100)
+    theta_final, cost_history = gradient_descent(X, y, theta, 0.1, 1000)
     predictions = model(X, theta_final)
 
-    printer.print_plots(x, y, X, cost_history, predictions)
     coef = get_determination_coef(y, predictions)
     print("Coefficient of determination : " + str(coef))
+    printer.print_plots(x, y, X, cost_history, predictions, unormalized_x)
 
     try:
         file = open("../tmp/save.txt", "w")
         file.write(str(float(theta_final[0])) + "," + str(float(theta_final[1])))
         file.close()
     except:
-        print("\033[31mError during writing theta value.\n\033[0;0m")
+        error("\033[31mError during writing theta value.\n\033[0;0m")
     return theta_final
 
 
