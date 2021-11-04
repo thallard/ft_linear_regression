@@ -38,8 +38,6 @@ def prediction():
         error("\033[31mData file is unreachable.\033[31m\n")
     thetas = get_theta()
     price = int(thetas[1] + thetas[0] * normalize(km, data[:, 0]))
-    if price < 0:
-        print("Price is ")
     print("Estimated price :", price)
 
 
